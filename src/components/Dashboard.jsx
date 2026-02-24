@@ -6,12 +6,19 @@ import WeeklyReview from './WeeklyReview';
 import SettingsModal from './SettingsModal';
 import { ChevronLeft, ChevronRight, Calendar, Settings } from 'lucide-react';
 
-// Utility to get the Monday of the current week (or a given date)
+// Utility to get the Monday of the current week (or a given date) in local time
 const getMonday = (d) => {
     const date = new Date(d);
+    // getDay() returns 0 for Sunday, 1 for Monday. We want 1-7 where 1 is Monday.
     const day = date.getDay() || 7;
-    if (day !== 1) date.setHours(-24 * (day - 1));
-    return date.toISOString().split('T')[0];
+    // Shift date to the Monday of this week
+    date.setDate(date.getDate() - (day - 1));
+
+    // Construct YYYY-MM-DD purely from local time to avoid UTC timezone shifts
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const dayOfMonth = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${dayOfMonth}`;
 };
 
 const Dashboard = () => {
